@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -101,8 +102,14 @@ public class MainActivity extends Activity {
         mQuestionTextView = findViewById(R.id.question_text_view);
         mProgressBar = findViewById(R.id.progress_bar);
 
-        mIndex = 0;
-        mScore = 0;
+        if (savedInstanceState != null) {
+            mScore = savedInstanceState.getInt("ScoreKey");
+            mIndex = savedInstanceState.getInt("IndexKey");
+        } else {
+            mScore = 0;
+            mIndex = 0;
+        }
+
         mQuestion = mQuestionBank[mIndex].getQuestionID();
         mQuestionTextView.setText(mQuestion);
         mScoreTextView.setText(mScore+"/"+mQuestionBank.length);
@@ -123,5 +130,12 @@ public class MainActivity extends Activity {
             }
         });
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("ScoreKey", mScore);
+        outState.putInt("IndexKey", mIndex);
     }
 }
