@@ -3,7 +3,9 @@ package com.londonappbrewery.quizzler;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -35,13 +37,13 @@ public class MainActivity extends Activity {
     }
 
     private void updateQuestion() {
-        mScoreTextView.setText(mScore+"/"+mQuestionBank.length);
         mIndex++;
         mIndex %= mQuestionBank.length;
+        mProgressBar.incrementProgressBy(PROGRESS_BAR_INCREMENT);
         if (mIndex == 0) {
             this.finishApp();
         }
-        mProgressBar.incrementProgressBy(PROGRESS_BAR_INCREMENT);
+        mScoreTextView.setText(mScore+"/"+mQuestionBank.length);
         mQuestion = mQuestionBank[mIndex].getQuestionID();
         mQuestionTextView.setText(mQuestion);
     }
@@ -52,7 +54,15 @@ public class MainActivity extends Activity {
         alert.setTitle("Game Over");
         alert.setCancelable(false);
         alert.setMessage("You scored " + mScore + " points!");
-        alert.setPositiveButton("Close application", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("Restart application", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mProgressBar.setProgress(0);
+                mScore = 0;
+                mScoreTextView.setText(mScore+"/"+mQuestionBank.length);
+            }
+        });
+        alert.setNegativeButton("Close application", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
