@@ -14,10 +14,6 @@ import com.londonappbrewery.quizzler.models.TrueFalse;
 
 public class MainActivity extends Activity {
 
-    // TODO: Declare constants here
-
-
-    // TODO: Declare member variables here:
     Button mTrueButton;
     Button mFalseButton;
     TextView mScoreTextView;
@@ -29,23 +25,25 @@ public class MainActivity extends Activity {
     int mQuestion;
 
     private void checkAnswer(boolean answer) {
-        if (this.mQuestionBank[mIndex].isAnswer() != answer) {
+        if (mQuestionBank[mIndex].isAnswer() != answer) {
             Toast.makeText(getApplicationContext(), R.string.incorrect_toast, Toast.LENGTH_LONG).show();
             return;
         }
 
-        this.mScore++;
+        mScore++;
         Toast.makeText(getApplicationContext(), R.string.correct_toast, Toast.LENGTH_LONG).show();
     }
 
     private void updateQuestion() {
-        //TODO
-//        int number = this.mIndex + 1;
-//        if (number < this.mQuestionBank.length) {
-//            this.mIndex = number;
-//        } else {
-//            this.finishApp();
-//        }
+        mScoreTextView.setText(mScore+"/"+mQuestionBank.length);
+        mIndex++;
+        mIndex %= mQuestionBank.length;
+        if (mIndex == 0) {
+            this.finishApp();
+        }
+        mProgressBar.incrementProgressBy(PROGRESS_BAR_INCREMENT);
+        mQuestion = mQuestionBank[mIndex].getQuestionID();
+        mQuestionTextView.setText(mQuestion);
     }
 
     private void finishApp() {
@@ -53,7 +51,7 @@ public class MainActivity extends Activity {
 
         alert.setTitle("Game Over");
         alert.setCancelable(false);
-        alert.setMessage("You scored" + mScore + " points!");
+        alert.setMessage("You scored " + mScore + " points!");
         alert.setPositiveButton("Close application", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -64,7 +62,6 @@ public class MainActivity extends Activity {
     }
 
 
-    // TODO: Uncomment to create question bank
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
             new TrueFalse(R.string.question_1, true),
             new TrueFalse(R.string.question_2, true),
@@ -80,6 +77,8 @@ public class MainActivity extends Activity {
             new TrueFalse(R.string.question_12, false),
             new TrueFalse(R.string.question_13,true)
     };
+
+    final int PROGRESS_BAR_INCREMENT = (int) Math.ceil(100.0 / this.mQuestionBank.length);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
